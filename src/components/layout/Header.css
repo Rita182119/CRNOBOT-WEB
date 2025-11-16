@@ -1,6 +1,6 @@
 /* src/components/layout/Header.css */
 .header {
-  position: fixed;
+  position: sticky;
   top: 0;
   left: 0;
   width: 100%;
@@ -15,11 +15,16 @@
 }
 
 .logo-link {
+  height: 40px;
   font-size: 1.5rem;
   font-weight: 800;
   color: var(--primary-color);
   text-decoration: none;
   text-shadow: 0 2px 8px rgba(51, 255, 153, 0.3);
+}
+.logo-image {
+  height: 100%;
+  width: auto;
 }
 
 /* Botón del menú hamburguesa */

@@ -141,7 +141,7 @@
 /* --- Features Section (Cursos) --- */
 .features-section {
   padding: 3rem 1rem;
-  background-color: var(--background-dark);
+  background-color: var(--background-medium-dark);
 }
 
 .card-image {
@@ -152,7 +152,6 @@
 
 /* --- Sección de Certificación con Logo Flexible --- */
 .certification-section {
-  background-color: var(--background-medium-dark);
   padding: 4rem 1rem;
   text-align: center;
 }
@@ -212,37 +211,22 @@
 }
 
 .card-header {
-  margin-bottom: 2rem;
-  flex-shrink: 0;
   width: 100%;
 }
 
-.certification-icon {
+.certification-icons {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 160px; /* Altura flexible base */
-  margin-bottom: 1.5rem;
-  padding: 1rem;
+  height: 150px;
 }
 
 /* Logo CRONO BOT - Enfoque flexible */
-.certification-image {
-  width: auto;
-  height: auto;
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
+.certification-images {
+  margin-top: 20px;
+  height: 80%;
   transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   filter: brightness(0.9) contrast(1.1);
-}
-
-/* Clase específica para el logo de Crono Bot */
-.crono-logo {
-  max-width: 180px; /* Tamaño máximo flexible */
-  max-height: 140px; /* Tamaño máximo flexible */
-  min-width: 120px; /* Tamaño mínimo */
-  min-height: 80px; /* Tamaño mínimo */
 }
 
 .certification-card:hover .certification-image {
@@ -466,9 +450,8 @@
     padding: 1.2rem 0.8rem;
   }
   
-  .certification-icon {
+  .certification-icons {
     height: 100px;
-    margin-bottom: 1rem;
   }
   
   .crono-logo {

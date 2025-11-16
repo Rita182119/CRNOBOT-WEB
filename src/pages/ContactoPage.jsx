@@ -17,14 +17,24 @@ const ContactoPage = () => {
   const [activeSocial, setActiveSocial] = useState(null);
   const location = useLocation();
 
-  // Efecto para scroll al section de contacto si viene con hash
+  // Efecto para scroll automático al formulario cuando viene con hash
   useEffect(() => {
-    if (location.hash === '#contact') {
-      const contactSection = document.getElementById('contact-section');
-      if (contactSection) {
+    if (location.hash === '#contact-form') {
+      const formSection = document.getElementById('contact-form');
+      if (formSection) {
         setTimeout(() => {
-          contactSection.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
+          formSection.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'center'
+          });
+          
+          // Opcional: agregar un efecto visual de highlight
+          formSection.style.transition = 'all 0.5s ease';
+          formSection.style.boxShadow = '0 0 0 3px rgba(51, 255, 153, 0.5)';
+          setTimeout(() => {
+            formSection.style.boxShadow = 'none';
+          }, 2000);
+        }, 300);
       }
     }
   }, [location]);
@@ -179,8 +189,8 @@ const ContactoPage = () => {
   ];
 
   return (
-    <div className="contacto-container" id="contact-section">
-      <header className="contacto-header">
+    <div className="contacto-container" id="contact-section" >
+      <header className="contacto-header" id="contact-form">
         <div className="header-content">
           <h1 className="contacto-title">
             <span className="title-gradient">Conecta con Nosotros</span>
@@ -289,6 +299,7 @@ const ContactoPage = () => {
           </div>
         </div>
 
+        {/* FORMULARIO CON ID PARA EL HASH */}
         <div className="contacto-form-container card-hover">
           <div className="form-header">
             <h2 className="form-title">Envía tu Mensaje</h2>

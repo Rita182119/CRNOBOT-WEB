@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Header.css';
+import logo from '../../imagenes/logoCrono.png';
 
 const Header = ({ onHeightChange }) => {
   const headerRef = useRef(null);
@@ -53,7 +54,9 @@ const Header = ({ onHeightChange }) => {
 
   return (
     <header className="header" ref={headerRef}>
-      <Link to="/" className="logo-link">Mi App</Link>
+      <Link to="/" className="logo-link">
+        <img src={logo} alt="Crono Bot Logo" className="logo-image" />
+      </Link>
 
       {/* Botón Toggle */}
       <button 

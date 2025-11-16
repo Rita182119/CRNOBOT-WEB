@@ -11,19 +11,19 @@ const sliderContent = [
   {
     image: Header1,
     title: 'Conviértete en Experto en QA Testing',
-    subtitle: 'Domina las técnicas más demandadas del mercado y asegura la calidad de software con nuestros cursos especializados.',
-    buttonText: 'Ver Cursos'
+    subtitle: 'Domina las metodologías ágiles y testing automatizado para garantizar la calidad perfecta de software en cualquier entorno.',
+    buttonText: 'Más Información'
   },
   {
     image: Header2,
-    title: 'Aprende Testing con Metodologías Ágiles',
-    subtitle: 'Formación práctica en testing manual, automatizado y de rendimiento con instructores expertos del sector.',
-    buttonText: 'Comenzar Ahora'
+    title: 'Especialízate en Inteligencia Artificial',
+    subtitle: 'Aprende machine learning, deep learning y desarrollo de soluciones con IA que transforman industrias y negocios.',
+    buttonText: 'Más Información'
   },
   {
     image: Header3,
-    title: 'Impulsa tu Carrera en Control de Calidad',
-    subtitle: 'Certificaciones reconocidas que te preparan para los desafíos reales de la industria tecnológica.',
+    title: 'Conviértete en Experto en Ciberseguridad',
+    subtitle: 'Domina ethical hacking, seguridad ofensiva y protección de sistemas para defender organizaciones de amenazas digitales.',
     buttonText: 'Más Información'
   }
 ];
@@ -60,8 +60,8 @@ const HeroSection = ({ headerHeight }) => {
             >
               <div className="overlay"></div>
               <div className="content">
-                <h1 className="hero-title">{slide.title}</h1>
-                <p className="hero-subtitle">{slide.subtitle}</p>
+                <h1 className="hero-titles">{slide.title}</h1>
+                <p className="hero-subtitles">{slide.subtitle}</p>
                 <button className="primary-button">{slide.buttonText}</button>
               </div>
             </div>

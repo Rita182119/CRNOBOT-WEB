@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import HeroSection from '../components/sections/HeroSection';
 import FeatureCard from '../components/common/FeatureCard';
-import TestimonialCard from '../components/common/TestimonialCard';
+//import TestimonialCard from '../components/common/TestimonialCard';
 import CtaSection from '../components/sections/CtaSection';
 import './HomePage.css';
 import logo from '../imagenes/logoCrono.png';
@@ -15,23 +15,23 @@ const CertificationSection = () => (
         <span className="highlight-text">Certificaciones</span> que Validan tu Expertise
       </h2>
       <p className="section-subtitle">
-        Al completar exitosamente nuestros programas, recibirás una doble certificación que respalda tus conocimientos:
+        Al completar exitosamente nuestros programas, recibirás una certificación que respalda tus conocimientos:
       </p>
     </div>
     <div className="certification-grid">
       <div className="certification-card">
         <div className="card-header">
-          <div className="certification-icon">
+          <div className="certification-icons">
             <img 
               src={logo} 
               alt="Certificado CRONO BOT" 
-              className="certification-image crono-logo" 
+              className="certification-images crono-logo" 
             />
           </div>
         </div>
         <div className="card-body">
           <h3>Certificado CRONO BOT</h3>
-          <p>Certificación oficial que acredita tu dominio en QA Testing y Automatización, respaldada por nuestra empresa.</p>
+          <p>Certificación oficial que acredita tu dominio en las distintas especializaciones en el area de tecnologia</p>
         </div>
       </div>
       {/*
@@ -53,7 +53,7 @@ const CertificationSection = () => (
       */}
     </div>
     <div className="certification-footer">
-      <p className="footer-text">Nuestros programas están diseñados bajo los estándares de Google, garantizando que desarrolles habilidades altamente demandadas en el mercado laboral actual.</p>
+      <p className="footer-text">Nuestros programas siguen metodologías ágiles y prácticas actuales del sector, garantizando que desarrolles habilidades altamente demandadas en el mercado laboral actual.</p>
     </div>
   </section>
 );
@@ -64,35 +64,15 @@ const CoursesCarousel = () => {
   const [slidesToShow, setSlidesToShow] = useState(4);
   const [totalSlides, setTotalSlides] = useState(1);
   const [isPaused, setIsPaused] = useState(false);
+  const [showNavigation, setShowNavigation] = useState(false);
   
   const courses = [
     {
       title: "QA Testing Intensivo",
       description: "Domina los fundamentos del control de calidad de software y metodologías de testing desde cero.",
-      price: "$199.99",
+      price: "$149.99",
       isFeatured: true,
       imageUrl: "https://pandorafms.com/blog/wp-content/uploads/2022/02/QA-1.png"
-    },
-    {
-      title: "Automatización de APIs con Karate",
-      description: "Aprende a crear y ejecutar pruebas automatizadas para APIs REST usando el framework Karate.",
-      price: "$149.99",
-      isFeatured: false,
-      imageUrl: "https://cdn.prod.website-files.com/5ff9f08a3928de42db400872/6390b4f99767824dce49d001_01.png"
-    },
-    {
-      title: "Automatización Mobile con Appium",
-      description: "Desarrolla scripts de automatización para aplicaciones móviles en plataformas iOS y Android.",
-      price: "$179.99",
-      isFeatured: false,
-      imageUrl: "https://www.automatetheplanet.com/wp-content/uploads/2018/10/getting_started_appium_-android.jpg"
-    },
-    {
-      title: "Automatización Web con Playwright",
-      description: "Implementa pruebas end-to-end de alta velocidad y confiabilidad en navegadores modernos.",
-      price: "$159.99",
-      isFeatured: false,
-      imageUrl: "https://img-c.udemycdn.com/course/750x422/5064138_5362_4.jpg"
     }
   ];
 
@@ -112,7 +92,12 @@ const CoursesCarousel = () => {
       }
       
       setSlidesToShow(newSlidesToShow);
-      setTotalSlides(Math.ceil(courses.length / newSlidesToShow));
+      const calculatedTotalSlides = Math.ceil(courses.length / newSlidesToShow);
+      setTotalSlides(calculatedTotalSlides);
+      
+      // Mostrar navegación solo si hay más de un slide
+      setShowNavigation(calculatedTotalSlides > 1);
+      
       setCurrentIndex(0); // Resetear al cambiar tamaño
     };
 
@@ -123,7 +108,7 @@ const CoursesCarousel = () => {
 
   // Efecto para el movimiento automático
   useEffect(() => {
-    if (totalSlides <= 1 || isPaused) return; // No hacer auto-slide si solo hay un slide o está pausado
+    if (totalSlides <= 1 || isPaused || !showNavigation) return; // No hacer auto-slide si solo hay un slide o está pausado
     
     const interval = setInterval(() => {
       setCurrentIndex(prevIndex => {
@@ -132,7 +117,7 @@ const CoursesCarousel = () => {
     }, 4000); // Cambia cada 4 segundos
 
     return () => clearInterval(interval);
-  }, [totalSlides, isPaused]);
+  }, [totalSlides, isPaused, showNavigation]);
 
   const nextSlide = () => {
     setCurrentIndex(prevIndex => {
@@ -168,28 +153,46 @@ const CoursesCarousel = () => {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <h2 className="section-title">Programas Especializados en QA Testing</h2>
-      <div className="carousel-wrapper">
-        <button 
-          className="carousel-button prev" 
-          onClick={prevSlide} 
-          aria-label="Anterior"
-        >
-          &#10094;
-        </button>
+      <h2 className="section-title">Nuestros Cursos</h2>
+      <div className={`carousel-wrapper ${!showNavigation ? 'no-navigation' : ''}`}>
+        {/* Botones de navegación - SOLO SI HAY MÁS DE 1 SLIDE */}
+        {showNavigation && (
+          <>
+            <button 
+              className="carousel-button prev" 
+              onClick={prevSlide} 
+              aria-label="Anterior"
+            >
+              &#10094;
+            </button>
+            
+            <button 
+              className="carousel-button next" 
+              onClick={nextSlide} 
+              aria-label="Siguiente"
+            >
+              &#10095;
+            </button>
+          </>
+        )}
         
         <div className="carousel">
           <div 
             className="carousel-inner" 
             style={{ 
-              transform: `translateX(-${currentIndex * 100}%)`,
+              transform: showNavigation ? `translateX(-${currentIndex * 100}%)` : 'none',
+              justifyContent: !showNavigation ? 'center' : 'flex-start'
             }}
           >
             {courses.map((course, index) => (
               <div 
                 key={index} 
                 className="carousel-item"
-                style={{ width: `${slideWidth}%` }}
+                style={{ 
+                  width: `${slideWidth}%`,
+                  // Centrar cuando no hay navegación
+                  margin: !showNavigation ? '0 auto' : '0'
+                }}
               >
                 <FeatureCard
                   title={course.title}
@@ -202,18 +205,10 @@ const CoursesCarousel = () => {
             ))}
           </div>
         </div>
-        
-        <button 
-          className="carousel-button next" 
-          onClick={nextSlide} 
-          aria-label="Siguiente"
-        >
-          &#10095;
-        </button>
       </div>
       
       {/* Indicadores de paginación - SOLO SI HAY MÁS DE 1 SLIDE */}
-      {totalSlides > 1 && (
+      {showNavigation && totalSlides > 1 && (
         <div className="carousel-dots">
           {Array.from({ length: totalSlides }).map((_, index) => (
             <button
@@ -240,7 +235,7 @@ const HomePage = ({ headerHeight }) => {
       </section>
 
       <CertificationSection />
-
+      {/*
       <section className="testimonials-section">
         <div className="section-divider"></div>
         <h2 className="section-title">Testimonios de Nuestros Estudiantes</h2>
@@ -262,7 +257,7 @@ const HomePage = ({ headerHeight }) => {
           />
         </div>
       </section>
-
+      */}
       <CtaSection />
     </div>
   );

@@ -81,36 +81,11 @@ const SERVICES_DATA = [
 
 const COURSES_DATA = [
   {
-    title: "QA Intensivo",
-    description: "Domina los fundamentos del aseguramiento de la calidad de software desde cero.",
-    price: "$199.99",
-    isFeatured: true,
-    imageUrl: "https://pandorafms.com/blog/wp-content/uploads/2022/02/QA-1.png",
-    badge: "Más Popular"
-  },
-  {
-    title: "Automatización APIs con Karate",
-    description: "Aprende a automatizar pruebas de API de forma rápida y sencilla con la herramienta Karate.",
+    title: "QA Testing Intensivo",
+    description: "Domina los fundamentos del control de calidad de software y metodologías de testing desde cero.",
     price: "$149.99",
-    isFeatured: false,
-    imageUrl: "https://cdn.prod.website-files.com/5ff9f08a3928de42db400872/6390b4f99767824dce49d001_01.png",
-    badge: "Nuevo"
-  },
-  {
-    title: "Automatización Mobile con Appium",
-    description: "Crea scripts de automatización para aplicaciones móviles en iOS y Android.",
-    price: "$179.99",
-    isFeatured: false,
-    imageUrl: "https://www.automatetheplanet.com/wp-content/uploads/2018/10/getting_started_appium_-android.jpg",
-    badge: "Trending"
-  },
-  {
-    title: "Automatización Web con Playwright",
-    description: "Pruebas end-to-end de alta velocidad y fiabilidad en navegadores modernos.",
-    price: "$159.99",
-    isFeatured: false,
-    imageUrl: "https://img-c.udemycdn.com/course/750x422/5064138_5362_4.jpg",
-    badge: "Recomendado"
+    isFeatured: true,
+    imageUrl: "https://pandorafms.com/blog/wp-content/uploads/2022/02/QA-1.png"
   }
 ];
 
@@ -133,10 +108,12 @@ const TabContent = React.memo(({ service, isActive }) => {
           ))}
         </div>
         
+        {/*
         <div className="action-buttons">
           <button className="btn-primary">Ver Curso Completo</button>
           <button className="btn-secondary">Descargar Temario</button>
         </div>
+        */}
       </div>
       
       <div className="detail-visual">
@@ -249,26 +226,171 @@ const HeroSection = React.memo(({ isVisible }) => {
   );
 });
 
-const ServicesPage = () => {
-  const [activeTab, setActiveTab] = useState(0);
+// Componente del Carrusel adaptado del HomePage
+const CoursesCarousel = React.memo(() => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [slidesToShow, setSlidesToShow] = useState(4);
+  const [totalSlides, setTotalSlides] = useState(1);
   const [isPaused, setIsPaused] = useState(false);
+  const [showNavigation, setShowNavigation] = useState(false);
+  
+  const courses = useMemo(() => COURSES_DATA, []);
+
+  // Determinar cuántas tarjetas mostrar según el ancho de pantalla
+  useEffect(() => {
+    const handleResize = () => {
+      let newSlidesToShow;
+      
+      if (window.innerWidth >= 1900) {
+        newSlidesToShow = 4; // 4 cards en desktop grande
+      } else if (window.innerWidth >= 992) {
+        newSlidesToShow = 3; // 3 cards en desktop
+      } else if (window.innerWidth >= 768) {
+        newSlidesToShow = 2; // 2 cards en tablet
+      } else {
+        newSlidesToShow = 1; // 1 card en mobile
+      }
+      
+      setSlidesToShow(newSlidesToShow);
+      const calculatedTotalSlides = Math.ceil(courses.length / newSlidesToShow);
+      setTotalSlides(calculatedTotalSlides);
+      
+      // Mostrar navegación solo si hay más de un slide
+      setShowNavigation(calculatedTotalSlides > 1);
+      
+      setCurrentIndex(0); // Resetear al cambiar tamaño
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [courses.length]);
+
+  // Efecto para el movimiento automático
+  useEffect(() => {
+    if (totalSlides <= 1 || isPaused || !showNavigation) return; // No hacer auto-slide si solo hay un slide o está pausado
+    
+    const interval = setInterval(() => {
+      setCurrentIndex(prevIndex => {
+        return prevIndex >= totalSlides - 1 ? 0 : prevIndex + 1;
+      });
+    }, 4000); // Cambia cada 4 segundos
+
+    return () => clearInterval(interval);
+  }, [totalSlides, isPaused, showNavigation]);
+
+  const nextSlide = () => {
+    setCurrentIndex(prevIndex => {
+      return prevIndex >= totalSlides - 1 ? 0 : prevIndex + 1;
+    });
+  };
+
+  const prevSlide = () => {
+    setCurrentIndex(prevIndex => {
+      return prevIndex <= 0 ? totalSlides - 1 : prevIndex - 1;
+    });
+  };
+
+  const goToSlide = (index) => {
+    setCurrentIndex(index);
+  };
+
+  // Pausar el auto-slide cuando el usuario interactúa
+  const handleMouseEnter = () => {
+    setIsPaused(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsPaused(false);
+  };
+
+  // Calcular el ancho de cada slide
+  const slideWidth = 100 / slidesToShow;
+
+  return (
+    <div 
+      className="carousel-container"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <h2 className="section-title">Nuestros Cursos</h2>
+      <div className={`carousel-wrapper ${!showNavigation ? 'no-navigation' : ''}`}>
+        {/* Botones de navegación - SOLO SI HAY MÁS DE 1 SLIDE */}
+        {showNavigation && (
+          <>
+            <button 
+              className="carousel-button prev" 
+              onClick={prevSlide} 
+              aria-label="Anterior"
+            >
+              &#10094;
+            </button>
+            
+            <button 
+              className="carousel-button next" 
+              onClick={nextSlide} 
+              aria-label="Siguiente"
+            >
+              &#10095;
+            </button>
+          </>
+        )}
+        
+        <div className="carousel">
+          <div 
+            className="carousel-inner" 
+            style={{ 
+              transform: showNavigation ? `translateX(-${currentIndex * 100}%)` : 'none',
+              justifyContent: !showNavigation ? 'center' : 'flex-start'
+            }}
+          >
+            {courses.map((course, index) => (
+              <div 
+                key={index} 
+                className="carousel-item"
+                style={{ 
+                  width: `${slideWidth}%`,
+                  // Centrar cuando no hay navegación
+                  margin: !showNavigation ? '0 auto' : '0'
+                }}
+              >
+                <FeatureCard
+                  title={course.title}
+                  description={course.description}
+                  price={course.price}
+                  isFeatured={course.isFeatured}
+                  imageUrl={course.imageUrl}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      
+      {/* Indicadores de paginación - SOLO SI HAY MÁS DE 1 SLIDE */}
+      {showNavigation && totalSlides > 1 && (
+        <div className="carousel-dots">
+          {Array.from({ length: totalSlides }).map((_, index) => (
+            <button
+              key={index}
+              className={`dot ${index === currentIndex ? 'active' : ''}`}
+              onClick={() => goToSlide(index)}
+              aria-label={`Ir a slide ${index + 1}`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+});
+
+const ServicesPage = () => {
+  const [activeTab, setActiveTab] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef(null);
-  const carouselIntervalRef = useRef(null);
 
   // Usar useMemo para datos estáticos
   const services = useMemo(() => SERVICES_DATA, []);
-  const courses = useMemo(() => COURSES_DATA, []);
-
-  // Calcular valores derivados con useMemo
-  const totalSlides = useMemo(() => 
-    Math.ceil(courses.length / slidesToShow), 
-    [courses.length, slidesToShow]
-  );
-
-  const slideWidth = useMemo(() => 100 / slidesToShow, [slidesToShow]);
 
   // Intersection Observer optimizado
   useEffect(() => {
@@ -299,88 +421,8 @@ const ServicesPage = () => {
     };
   }, []);
 
-  // Lógica del carrusel optimizada
-  useEffect(() => {
-    const handleResize = () => {
-      let newSlidesToShow;
-      
-      if (window.innerWidth >= 1900) {
-        newSlidesToShow = 4;
-      } else if (window.innerWidth >= 992) {
-        newSlidesToShow = 3;
-      } else if (window.innerWidth >= 768) {
-        newSlidesToShow = 2;
-      } else {
-        newSlidesToShow = 1;
-      }
-      
-      setSlidesToShow(newSlidesToShow);
-    };
-
-    let resizeTimeout;
-    const debouncedResize = () => {
-      clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(handleResize, 100);
-    };
-
-    handleResize();
-    window.addEventListener('resize', debouncedResize);
-    
-    return () => {
-      window.removeEventListener('resize', debouncedResize);
-      clearTimeout(resizeTimeout);
-    };
-  }, []);
-
-  // Auto-slide del carrusel
-  useEffect(() => {
-    if (totalSlides <= 1 || isPaused) {
-      if (carouselIntervalRef.current) {
-        clearInterval(carouselIntervalRef.current);
-      }
-      return;
-    }
-    
-    carouselIntervalRef.current = setInterval(() => {
-      setCurrentIndex(prevIndex => 
-        prevIndex >= totalSlides - 1 ? 0 : prevIndex + 1
-      );
-    }, 4000);
-
-    return () => {
-      if (carouselIntervalRef.current) {
-        clearInterval(carouselIntervalRef.current);
-      }
-    };
-  }, [totalSlides, isPaused]);
-
-  // useCallback para funciones
-  const nextSlide = useCallback(() => {
-    setCurrentIndex(prevIndex => 
-      prevIndex >= totalSlides - 1 ? 0 : prevIndex + 1
-    );
-  }, [totalSlides]);
-
-  const prevSlide = useCallback(() => {
-    setCurrentIndex(prevIndex => 
-      prevIndex <= 0 ? totalSlides - 1 : prevIndex - 1
-    );
-  }, [totalSlides]);
-
-  const goToSlide = useCallback((index) => {
-    setCurrentIndex(index);
-  }, []);
-
   const handleTabChange = useCallback((index) => {
     setActiveTab(index);
-  }, []);
-
-  const handleMouseEnter = useCallback(() => {
-    setIsPaused(true);
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    setIsPaused(false);
   }, []);
 
   return (
@@ -415,75 +457,10 @@ const ServicesPage = () => {
         </div>
       </section>
 
-      {/* Courses Carousel Section */}
+      {/* Courses Carousel Section - USANDO EL NUEVO COMPONENTE ADAPTADO */}
       <section className="courses-carousel-section">
-        <div className="section-header">
-          <h2>Cursos Destacados</h2>
-          <p>Los programas más populares entre nuestros estudiantes</p>
-        </div>
-
-        <div 
-          className="carousel-container"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          <div className="carousel-wrapper">
-            <button 
-              className="carousel-button prev" 
-              onClick={prevSlide} 
-              aria-label="Anterior"
-            >
-              ‹
-            </button>
-            
-            <div className="carousel">
-              <div 
-                className="carousel-inner" 
-                style={{ 
-                  transform: `translateX(-${currentIndex * 100}%)`,
-                }}
-              >
-                {courses.map((course, index) => (
-                  <div 
-                    key={index} 
-                    className="carousel-item"
-                    style={{ width: `${slideWidth}%` }}
-                  >
-                    <FeatureCard
-                      title={course.title}
-                      description={course.description}
-                      price={course.price}
-                      isFeatured={course.isFeatured}
-                      imageUrl={course.imageUrl}
-                      badge={course.badge}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            <button 
-              className="carousel-button next" 
-              onClick={nextSlide} 
-              aria-label="Siguiente"
-            >
-              ›
-            </button>
-          </div>
-          
-          {totalSlides > 1 && (
-            <div className="carousel-dots">
-              {Array.from({ length: totalSlides }).map((_, index) => (
-                <button
-                  key={index}
-                  className={`dot ${index === currentIndex ? 'active' : ''}`}
-                  onClick={() => goToSlide(index)}
-                  aria-label={`Ir a slide ${index + 1}`}
-                />
-              ))}
-            </div>
-          )}
-        </div>
+        <div className="section-divider"></div>
+        <CoursesCarousel />
       </section>
 
       {/* CTA Section */}

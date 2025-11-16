@@ -18,6 +18,7 @@
 }
 
 .footer-logo {
+  height: 70px;
   font-size: 1.8rem;
   font-weight: bold;
   background: var(--gradient-4);

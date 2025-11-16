@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import './AboutPage.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import CtaSection from '../components/sections/CtaSection';
 
 const AboutPage = () => {
   const [activeFaq, setActiveFaq] = useState(null);
@@ -9,50 +10,43 @@ const AboutPage = () => {
   // Datos para la línea de tiempo
   const timelineData = [
     {
-      year: "2022",
-      title: "Fundación CRONO BOT",
-      description: "Iniciamos con la visión de democratizar la educación en QA Testing y automatización en Latinoamérica."
+      year: "2025",
+      month: "Agosto",
+      title: "Nacimiento de CRONO BOT como una idea",
+      description: "Nace la visión de revolucionar la educación tecnológica en esta nueva era de la tecnología, democratizando el acceso a conocimientos de vanguardia en desarrollo, inteligencia artificial, ciberseguridad y transformación digital."
     },
     {
-      year: "2023",
-      title: "Primeros Cursos de QA",
-      description: "Lanzamos nuestros primeros programas especializados en testing manual y automatización básica."
+      year: "2025",
+      month: "Octubre",
+      title: "Formalización del centro de capacitación de tecnología",
+      description: "Establecemos las bases como hub de formación integral en tecnología, lanzando programas especializados en desarrollo web, testing, data science y otras áreas clave de la industria."
     },
     {
-      year: "2024",
-      title: "Alianza con GDG Ica",
-      description: "Establecimos nuestra importante alianza con Google Developer Groups Ica para certificaciones conjuntas."
-    },
-    {
-      year: "2024",
-      title: "Expansión de Contenidos",
-      description: "Incorporamos cursos avanzados en Playwright, Appium y Karate para automatización completa."
-    },
-    {
-      year: "2024",
-      title: "Comunidad Activa",
-      description: "Construimos una comunidad sólida de más de 500 estudiantes y profesionales en QA Testing."
+      year: "2025",
+      month: "Noviembre",
+      title: "Apertura oficial de CRONO BOT",
+      description: "Nos lanzamos oficialmente al mercado con un webinar online masivo que marcó nuestro debut en el ecosistema tecnológico, consolidando nuestra presencia con una comunidad de entusiastas de la tecnología."
     }
   ];
 
   // Datos del equipo
   const teamData = [
     {
-      name: "Carlos Mendoza",
+      name: "Carlos Aparcana",
       role: "CEO & Fundador",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      image: "https://media.licdn.com/dms/image/v2/D4E03AQHcEKDIduaP2g/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1686071562007?e=1764806400&v=beta&t=VQ-38qyFUKOurshMfLta4rByfh_f78MXfHUMLYXCucE",
       bio: "Más de 8 años de experiencia en QA Automation. Especialista en frameworks de testing y mentoría técnica."
     },
     {
-      name: "Ana Torres",
+      name: "Ruben Quispe",
       role: "Directora Académica",
-      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      image: "https://media.licdn.com/dms/image/v2/C4E03AQEk8W4zJMm62g/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1639937048273?e=1764806400&v=beta&t=P5_o9vgSWkdigGPenwXg2v_GvdwztwdCcYkH_-RLDwU",
       bio: "Líder en desarrollo de contenido educativo práctico para testing manual y automatizado."
     },
     {
-      name: "Miguel Ángel Ruiz",
+      name: "Orlando Valencia",
       role: "Instructor Senior",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      image: "https://media.licdn.com/dms/image/v2/D4E03AQFDqFd7i3t9xA/profile-displayphoto-shrink_800_800/B4EZUfaFjOH0Ak-/0/1739988687540?e=1764806400&v=beta&t=jEk5uVfU1P5bB7W5T-vwcJMVtpjEDQAs1Ms9f3g3eIY",
       bio: "Automation Engineer con expertise en Playwright, Appium y estrategias de testing ágil."
     }
   ];
@@ -60,46 +54,65 @@ const AboutPage = () => {
   // Valores de la empresa
   const valuesData = [
     {
-      icon: "🎯",
-      title: "Educación Práctica",
-      description: "Enseñamos con proyectos reales que enfrentarás en el mundo laboral actual."
+      icon: "🔥",
+      title: "Skills que Importan",
+      description: "Olvídate de cursos aburridos. Aquí construyes portfolio con tech stack que realmente usan las empresas en 2024."
     },
     {
-      icon: "🤝",
-      title: "Comunidad GDG",
-      description: "Formamos parte de la red global de Google Developers Groups, conectándote con oportunidades."
+      icon: "⚡",
+      title: "Aprendizaje Express",
+      description: "De cero a developer en tiempo récord. Metodología intensiva que prioriza lo esencial para entrar al mercado YA."
     },
     {
-      icon: "🚀",
-      title: "Actualización Constante",
-      description: "Mantenemos nuestros contenidos al día con las últimas herramientas y metodologías de testing."
+      icon: "🤖",
+      title: "Tech del Futuro",
+      description: "IA, Machine Learning, Cloud Native. Preparamos para las tendencias, no para el pasado. Sé relevante hoy y mañana."
     },
     {
-      icon: "📈",
-      title: "Enfoque Laboral",
-      description: "Preparamos estudiantes para obtener empleo rápidamente en el competitivo mercado tech."
+      icon: "💼",
+      title: "Conexiones Reales",
+      description: "Networking que transforma carreras. Conectamos con startups scale-ups y empresas que buscan talento como el tuyo."
+    },
+    {
+    icon: "💡",
+    title: "Innovación Constante",
+    description: "Nuestros métodos evolucionan con la industria. Siempre a la vanguardia de las mejores prácticas y metodologías ágiles del sector tech."
+    },
+    {
+      icon: "🌍",
+      title: "Remote First",
+      description: "Preparación 100% para trabajos remotos. Aprendes las herramientas y metodologías que usan las empresas globales para trabajo distribuido."
     }
   ];
 
   // Preguntas frecuentes
-  const faqData = [
-    {
-      question: "¿Qué certificaciones obtengo al completar los cursos?",
-      answer: "Recibes doble certificación: Certificado oficial de CRONO BOT que valida tus habilidades técnicas y Certificado de GDG Ica respaldado por la comunidad Google Developers, ampliamente reconocido en la industria."
-    },
-    {
-      question: "¿Los cursos son 100% prácticos?",
-      answer: "Sí, nuestro enfoque es 80% práctico y 20% teórico. Trabajarás en proyectos reales desde el primer día, simulando entornos laborales actuales con herramientas que usan las empresas líderes."
-    },
-    {
-      question: "¿Necesito experiencia previa en programación?",
-      answer: "No es necesaria. Tenemos rutas de aprendizaje diseñadas para principiantes que incluyen fundamentos de programación, hasta cursos avanzados para quienes ya tienen experiencia en testing."
-    },
-    {
-      question: "¿Cómo me ayuda la certificación de GDG Ica?",
-      answer: "La certificación GDG Ica te conecta con una red global de desarrolladores y empresas, aumenta tu credibilidad profesional y es un diferenciador clave en procesos de reclutamiento tech."
-    }
-  ];
+  // Preguntas frecuentes - Versión técnica
+const faqData = [
+  {
+    question: "¿Qué certificación obtengo al finalizar?",
+    answer: "Certificación CRONO BOT que acredita tu dominio en tecnologías de testing y automatización, con validez en el mercado laboral tech y reconocimiento por empresas del sector."
+  },
+  {
+    question: "¿El enfoque es práctico o teórico?",
+    answer: "80% práctico - 20% teórico. Aprendes haciendo: proyectos reales, casos de estudio actuales y herramientas que se usan en empresas de tecnología hoy."
+  },
+  {
+    question: "¿Puedo empezar sin saber programar?",
+    answer: "Totalmente. Nuestro programa para principiantes te lleva desde cero hasta nivel profesional, con fundamentos de programación incluidos en la ruta de aprendizaje."
+  },
+  {
+    question: "¿Qué ventaja tiene su certificación?",
+    answer: "Demuestra habilidades prácticas validadas, conocimiento en stack tecnológico actual y preparación para desafíos reales del mundo laboral tech."
+  },
+  {
+    question: "¿Stack tecnológico que enseñas?",
+    answer: "Testing manual/automático, Selenium, Appium, JMeter, metodologías ágiles, CI/CD, y herramientas que piden los reclutadores en 2024."
+  },
+  {
+    question: "¿Soporte durante el curso?",
+    answer: "Mentoría 1:1, revisión de código, resolución de dudas en tiempo real y comunidad de estudiantes para networking y colaboración."
+  }
+];
 
   // Alternar FAQ
   const toggleFaq = (index) => {
@@ -131,37 +144,60 @@ const AboutPage = () => {
 
   return (
     <div className="about-page">
-      {/* Hero Section */}
+      {/* Hero Section Moderna */}
       <section className="about-hero">
+        <div className="floating-particles">
+          <div className="particle"></div>
+          <div className="particle"></div>
+          <div className="particle"></div>
+          <div className="particle"></div>
+        </div>
+        
         <div className="about-hero-content">
-          <h1 className="animate-fadeInUp">Formando los Mejores QA del Mercado</h1>
-          <p className="animate-fadeInUp delay-100">
-            En CRONO BOT, transformamos tu pasión por la tecnología en una carrera sólida 
-            en QA Testing con certificaciones respaldadas por nuestra empresa y GDG Ica.
+          <h1 className="animate-fadeInUp">Nuestra Historia</h1>
+          <p className="hero-subtitle animate-fadeInUp delay-100">
+            CRONOBOT nace con el propósito de impulsar el aprendizaje tecnológico accesible, dinamico, practico y de calidad.
+Fundado por profesionales apasionados por la innovación, el centro surge como respuesta a la necesidad de formar nuevos talentos digitales capaces de afrontar los retos de la transformación tecnológica que vienen cursando la gran mayoria de empresas en la actualidad.
+Desde sus inicios, CRONOBOT se ha enfocado en brindar una formación práctica, actualizada y certificada, combinando experiencia profesional con herramientas modernas de enseñanza virtual.
+
           </p>
           
-          <div className="hero-stats">
-            <div className="hero-stat reveal" ref={el => revealRefs.current[0] = el}>
-              <div className="hero-stat-number">500+</div>
-              <div className="hero-stat-label">Estudiantes</div>
+          <div className="mission-vision-grid animate-fadeInUp delay-200">
+            <div className="mission-card">
+              <div className="card-icon">🚀</div>
+              <h3>Misión</h3>
+              <p>
+                Formar y certificar profesionales competentes en las principales áreas de la tecnología, fomentando el aprendizaje continuo, la ética digital y la innovación aplicada al desarrollo personal y profesional.
+              </p>
             </div>
-            <div className="hero-stat reveal" ref={el => revealRefs.current[1] = el}>
-              <div className="hero-stat-number">95%</div>
-              <div className="hero-stat-label">Tasa de empleabilidad</div>
+            
+            <div className="vision-card">
+              <div className="card-icon">⭐</div>
+              <h3>Visión</h3>
+              <p>
+                Convertirnos en un referente nacional en capacitación tecnológica, reconocidos por la calidad académica, el impacto social y la formación integral de nuevos talentos profesionales en un nuevo entorno digital que conlleva una constante evolución.
+              </p>
             </div>
-            <div className="hero-stat reveal" ref={el => revealRefs.current[2] = el}>
-              <div className="hero-stat-number">8+</div>
-              <div className="hero-stat-label">Cursos especializados</div>
+          </div>
+
+          <div className="hero-stats animate-fadeInUp delay-300">
+            <div className="hero-stat">
+              <div className="hero-stat-number">100%</div>
+              <div className="hero-stat-label">Práctico</div>
             </div>
-            <div className="hero-stat reveal" ref={el => revealRefs.current[3] = el}>
-              <div className="hero-stat-number">2</div>
-              <div className="hero-stat-label">Certificaciones por curso</div>
+            <div className="hero-stat">
+              <div className="hero-stat-number">2x</div>
+              <div className="hero-stat-label">Certificación</div>
+            </div>
+            <div className="hero-stat">
+              <div className="hero-stat-number">2025</div>
+              <div className="hero-stat-label">Fundación</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Timeline Section */}
+      {/* Timeline Section Responsive */}
       <section className="timeline-section">
         <h2>Nuestra Trayectoria</h2>
         
@@ -173,7 +209,7 @@ const AboutPage = () => {
               ref={el => revealRefs.current[4 + index] = el}
             >
               <div className="timeline-content">
-                <span className="timeline-date">{item.year}</span>
+                <span className="timeline-date">{item.month} {item.year}</span>
                 <h3>{item.title}</h3>
                 <p>{item.description}</p>
               </div>
@@ -220,7 +256,7 @@ const AboutPage = () => {
             <div 
               className="value-card reveal" 
               key={index}
-              ref={el => revealRefs.current[12 + index] = el}
+              ref={el => revealRefs.current[0 + index] = el}
             >
               <div className="value-icon">{value.icon}</div>
               <h3>{value.title}</h3>
@@ -256,19 +292,7 @@ const AboutPage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="about-cta">
-        <div className="about-cta-content">
-          <h2>¿Listo para Iniciar tu Carrera en QA Testing?</h2>
-          <p>
-            Únete a nuestra comunidad y obtén la doble certificación CRONO BOT y GDG Ica 
-            que te diferenciará en el mercado laboral tech.
-          </p>
-          <div className="cta-buttons">
-            <a href="#courses" className="cta-button">Ver Cursos Disponibles</a>
-            <a href="#contact" className="cta-button outline">Chatear con Asesor</a>
-          </div>
-        </div>
-      </section>
+      <CtaSection />
     </div>
   );
 };
