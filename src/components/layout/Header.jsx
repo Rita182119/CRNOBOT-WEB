@@ -69,16 +69,16 @@ const Header = ({ onHeightChange }) => {
         <span></span>
       </button>
 
-      {/* Overlay transparente para la parte izquierda */}
+      {/* Overlay transparente para la parte DERECHA (ahora que el menú sale de la izquierda) */}
       {menuOpen && isMobile && (
         <div 
-          className="overlay-left" 
+          className="overlay-right" 
           onClick={handleOverlayClick}
           aria-hidden="true"
         ></div>
       )}
 
-      {/* Menú */}
+      {/* Menú - Ahora sale del lado izquierdo */}
       <nav className={`nav-menu ${menuOpen ? 'active' : ''}`}>
         <Link 
           to="/" 

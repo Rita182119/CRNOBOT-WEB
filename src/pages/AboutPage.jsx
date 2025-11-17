@@ -4,6 +4,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import CtaSection from '../components/sections/CtaSection';
 
 const AboutPage = () => {
+
   const [activeFaq, setActiveFaq] = useState(null);
   const revealRefs = useRef([]);
   
@@ -86,42 +87,33 @@ const AboutPage = () => {
   ];
 
   // Preguntas frecuentes
-  // Preguntas frecuentes - Versión técnica
-const faqData = [
-  {
-    question: "¿Qué certificación obtengo al finalizar?",
-    answer: "Certificación CRONO BOT que acredita tu dominio en tecnologías de testing y automatización, con validez en el mercado laboral tech y reconocimiento por empresas del sector."
-  },
-  {
-    question: "¿El enfoque es práctico o teórico?",
-    answer: "80% práctico - 20% teórico. Aprendes haciendo: proyectos reales, casos de estudio actuales y herramientas que se usan en empresas de tecnología hoy."
-  },
-  {
-    question: "¿Puedo empezar sin saber programar?",
-    answer: "Totalmente. Nuestro programa para principiantes te lleva desde cero hasta nivel profesional, con fundamentos de programación incluidos en la ruta de aprendizaje."
-  },
-  {
-    question: "¿Qué ventaja tiene su certificación?",
-    answer: "Demuestra habilidades prácticas validadas, conocimiento en stack tecnológico actual y preparación para desafíos reales del mundo laboral tech."
-  },
-  {
-    question: "¿Stack tecnológico que enseñas?",
-    answer: "Testing manual/automático, Selenium, Appium, JMeter, metodologías ágiles, CI/CD, y herramientas que piden los reclutadores en 2024."
-  },
-  {
-    question: "¿Soporte durante el curso?",
-    answer: "Mentoría 1:1, revisión de código, resolución de dudas en tiempo real y comunidad de estudiantes para networking y colaboración."
-  }
-];
+  const faqData = [
+    {
+      question: "¿Qué certificaciones obtengo al completar los cursos?",
+      answer: "Recibes doble certificación: Certificado oficial de CRONO BOT que valida tus habilidades técnicas y Certificado de GDG Ica respaldado por la comunidad Google Developers, ampliamente reconocido en la industria."
+    },
+    {
+      question: "¿Los cursos son 100% prácticos?",
+      answer: "Sí, nuestro enfoque es 80% práctico y 20% teórico. Trabajarás en proyectos reales desde el primer día, simulando entornos laborales actuales con herramientas que usan las empresas líderes."
+    },
+    {
+      question: "¿Necesito experiencia previa en programación?",
+      answer: "No es necesaria. Tenemos rutas de aprendizaje diseñadas para principiantes que incluyen fundamentos de programación, hasta cursos avanzados para quienes ya tienen experiencia en testing."
+    },
+    {
+      question: "¿Cómo me ayuda la certificación de GDG Ica?",
+      answer: "La certificación GDG Ica te conecta con una red global de desarrolladores y empresas, aumenta tu credibilidad profesional y es un diferenciador clave en procesos de reclutamiento tech."
+    }
+  ];
 
   // Alternar FAQ
   const toggleFaq = (index) => {
     setActiveFaq(activeFaq === index ? null : index);
   };
 
-  // Efecto para animación al hacer scroll
+  // Efecto para animación al hacer scroll - CORREGIDO
   useEffect(() => {
-    const revealElements = revealRefs.current;
+    const revealElements = revealRefs.current.filter(el => el !== null && el !== undefined);
     
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -129,7 +121,10 @@ const faqData = [
           entry.target.classList.add('active');
         }
       });
-    }, { threshold: 0.1 });
+    }, { 
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    });
     
     revealElements.forEach(el => {
       if (el) observer.observe(el);
@@ -141,6 +136,13 @@ const faqData = [
       });
     };
   }, []);
+
+  // Función para manejar referencias de forma segura
+  const addToRefs = (el, index) => {
+    if (el && !revealRefs.current.includes(el)) {
+      revealRefs.current[index] = el;
+    }
+  };
 
   return (
     <div className="about-page">
@@ -155,11 +157,10 @@ const faqData = [
         
         <div className="about-hero-content">
           <h1 className="animate-fadeInUp">Nuestra Historia</h1>
-          <p className="hero-subtitle animate-fadeInUp delay-100">
-            CRONOBOT nace con el propósito de impulsar el aprendizaje tecnológico accesible, dinamico, practico y de calidad.
-Fundado por profesionales apasionados por la innovación, el centro surge como respuesta a la necesidad de formar nuevos talentos digitales capaces de afrontar los retos de la transformación tecnológica que vienen cursando la gran mayoria de empresas en la actualidad.
-Desde sus inicios, CRONOBOT se ha enfocado en brindar una formación práctica, actualizada y certificada, combinando experiencia profesional con herramientas modernas de enseñanza virtual.
-
+          <p className="hero-subtitles animate-fadeInUp delay-100">
+            CRONOBOT nace con el propósito de impulsar el aprendizaje tecnológico accesible, dinámico, práctico y de calidad.
+            Fundado por profesionales apasionados por la innovación, el centro surge como respuesta a la necesidad de formar 
+            nuevos talentos digitales capaces de afrontar los retos de la transformación tecnológica.
           </p>
           
           <div className="mission-vision-grid animate-fadeInUp delay-200">
@@ -167,7 +168,8 @@ Desde sus inicios, CRONOBOT se ha enfocado en brindar una formación práctica, 
               <div className="card-icon">🚀</div>
               <h3>Misión</h3>
               <p>
-                Formar y certificar profesionales competentes en las principales áreas de la tecnología, fomentando el aprendizaje continuo, la ética digital y la innovación aplicada al desarrollo personal y profesional.
+                Formar y certificar profesionales competentes en las principales áreas de la tecnología, 
+                fomentando el aprendizaje continuo, la ética digital y la innovación aplicada al desarrollo personal y profesional.
               </p>
             </div>
             
@@ -175,7 +177,8 @@ Desde sus inicios, CRONOBOT se ha enfocado en brindar una formación práctica, 
               <div className="card-icon">⭐</div>
               <h3>Visión</h3>
               <p>
-                Convertirnos en un referente nacional en capacitación tecnológica, reconocidos por la calidad académica, el impacto social y la formación integral de nuevos talentos profesionales en un nuevo entorno digital que conlleva una constante evolución.
+                Convertirnos en un referente nacional en capacitación tecnológica, reconocidos por la 
+                calidad académica, el impacto social y la formación integral de nuevos talentos profesionales.
               </p>
             </div>
           </div>
@@ -197,7 +200,7 @@ Desde sus inicios, CRONOBOT se ha enfocado en brindar una formación práctica, 
         </div>
       </section>
 
-      {/* Timeline Section Responsive */}
+      {/* Timeline Section CORREGIDA - Alternada izquierda/derecha */}
       <section className="timeline-section">
         <h2>Nuestra Trayectoria</h2>
         
@@ -206,7 +209,7 @@ Desde sus inicios, CRONOBOT se ha enfocado en brindar una formación práctica, 
             <div 
               className={`timeline-item ${index % 2 === 0 ? 'left' : 'right'} reveal`} 
               key={index}
-              ref={el => revealRefs.current[4 + index] = el}
+              ref={el => addToRefs(el, index)}
             >
               <div className="timeline-content">
                 <span className="timeline-date">{item.month} {item.year}</span>
@@ -227,7 +230,7 @@ Desde sus inicios, CRONOBOT se ha enfocado en brindar una formación práctica, 
             <div 
               className="team-member reveal" 
               key={index}
-              ref={el => revealRefs.current[9 + index] = el}
+              ref={el => addToRefs(el, 10 + index)}
             >
               <div className="team-member-image">
                 <img src={member.image} alt={member.name} />
@@ -256,7 +259,7 @@ Desde sus inicios, CRONOBOT se ha enfocado en brindar una formación práctica, 
             <div 
               className="value-card reveal" 
               key={index}
-              ref={el => revealRefs.current[0 + index] = el}
+              ref={el => addToRefs(el, 20 + index)}
             >
               <div className="value-icon">{value.icon}</div>
               <h3>{value.title}</h3>
@@ -275,7 +278,7 @@ Desde sus inicios, CRONOBOT se ha enfocado en brindar una formación práctica, 
             <div 
               className={`faq-item ${activeFaq === index ? 'active' : ''} reveal`} 
               key={index}
-              ref={el => revealRefs.current[16 + index] = el}
+              ref={el => addToRefs(el, 30 + index)}
             >
               <div 
                 className="faq-question" 

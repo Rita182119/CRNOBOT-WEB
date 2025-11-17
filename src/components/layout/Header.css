@@ -36,6 +36,7 @@
   cursor: pointer;
   padding: 0.5rem;
   gap: 0.25rem;
+  z-index: 1002;
 }
 
 .menu-toggle span {
@@ -97,14 +98,16 @@
   border-radius: 2px;
 }
 
-/* Overlay para móvil */
-.overlay-left {
+/* Overlay para móvil - AHORA A LA DERECHA */
+.overlay-right {
   position: fixed;
+  display: block;
   top: 0;
-  left: 0;
-  width: 30%;
+  right: 0;
+  width: 100%;
   height: 100vh;
-  background: transparent;
+  background-color: rgba(0, 0, 0, 0.842);
+  right: -10%; /* Cambiado de right a left */
   z-index: 998;
 }
 
@@ -116,13 +119,12 @@
 
   .menu-toggle {
     display: flex;
-    z-index: 1002;
   }
 
   .nav-menu {
     position: fixed;
     top: 0;
-    right: -100%;
+    left: -100%; /* Cambiado de right a left */
     width: 70%;
     height: 100vh;
     background: rgba(0, 0, 0, 0.98);
@@ -132,13 +134,14 @@
     align-items: flex-start;
     padding: 5rem 2rem 2rem;
     gap: 1rem;
-    transition: right 0.3s ease;
+    transition: left 0.3s ease; /* Cambiado de right a left */
     z-index: 1001;
-    border-left: 1px solid rgba(51, 255, 153, 0.2);
+    border-right: 1px solid rgba(51, 255, 153, 0.2); /* Cambiado border-left a border-right */
+    border-left: none;
   }
 
   .nav-menu.active {
-    right: 0;
+    left: 0; /* Cambiado de right a left */
   }
 
   .nav-link {
@@ -148,8 +151,11 @@
     border-radius: 12px;
   }
 
-  .overlay-left {
+  .overlay-right {
     display: block;
+    background-color: rgba(0, 0, 0, 0.842);
+    right: -10%; /* Cambiado de right a left */
+    transition: right 1s ease; /* Cambiado de right a left */
   }
 }
 
