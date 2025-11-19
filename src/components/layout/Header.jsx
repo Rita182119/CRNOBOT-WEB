@@ -10,6 +10,11 @@ const Header = ({ onHeightChange }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
+  // Efecto para scroll al top al cambiar de ruta
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   useEffect(() => {
     const updateHeight = () => {
       if (headerRef.current) {
@@ -33,17 +38,20 @@ const Header = ({ onHeightChange }) => {
     };
   }, [onHeightChange]);
 
-  const handleScrollToSection = (sectionId) => {
-    if (location.pathname !== '/') {
-      navigate(`/#${sectionId}`);
-    } else {
-      const element = document.getElementById(sectionId);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-        window.history.pushState(null, null, `#${sectionId}`);
-      }
-    }
+  const handleNavigation = (path) => {
     setMenuOpen(false);
+    navigate(path);
+  };
+
+  const handleHomeClick = () => {
+    setMenuOpen(false);
+    if (location.pathname === '/') {
+      // Si ya está en home, hacer scroll al top
+      window.scrollTo(0, 0);
+    } else {
+      // Si está en otra página, navegar al home
+      navigate('/');
+    }
   };
 
   const handleOverlayClick = () => {
@@ -54,7 +62,11 @@ const Header = ({ onHeightChange }) => {
 
   return (
     <header className="header" ref={headerRef}>
-      <Link to="/" className="logo-link">
+      <Link 
+        to="/" 
+        className="logo-link"
+        onClick={handleHomeClick}
+      >
         <img src={logo} alt="Crono Bot Logo" className="logo-image" />
       </Link>
 
@@ -69,7 +81,7 @@ const Header = ({ onHeightChange }) => {
         <span></span>
       </button>
 
-      {/* Overlay transparente para la parte DERECHA (ahora que el menú sale de la izquierda) */}
+      {/* Overlay */}
       {menuOpen && isMobile && (
         <div 
           className="overlay-right" 
@@ -78,12 +90,12 @@ const Header = ({ onHeightChange }) => {
         ></div>
       )}
 
-      {/* Menú - Ahora sale del lado izquierdo */}
+      {/* Menú */}
       <nav className={`nav-menu ${menuOpen ? 'active' : ''}`}>
         <Link 
           to="/" 
           className={`nav-link ${isActiveLink('/') ? 'active' : ''}`}
-          onClick={() => handleScrollToSection('inicio')}
+          onClick={handleHomeClick}
         >
           Inicio
         </Link>
@@ -91,7 +103,7 @@ const Header = ({ onHeightChange }) => {
         <Link 
           to="/about" 
           className={`nav-link ${isActiveLink('/about') ? 'active' : ''}`}
-          onClick={() => setMenuOpen(false)}
+          onClick={() => handleNavigation('/about')}
         >
           Nosotros
         </Link>
@@ -99,7 +111,7 @@ const Header = ({ onHeightChange }) => {
         <Link 
           to="/services" 
           className={`nav-link ${isActiveLink('/services') ? 'active' : ''}`}
-          onClick={() => setMenuOpen(false)}
+          onClick={() => handleNavigation('/services')}
         >
           Servicios
         </Link>
@@ -107,7 +119,7 @@ const Header = ({ onHeightChange }) => {
         <Link 
           to="/contact" 
           className={`nav-link ${isActiveLink('/contact') ? 'active' : ''}`}
-          onClick={() => setMenuOpen(false)}
+          onClick={() => handleNavigation('/contact')}
         >
           Contacto
         </Link>

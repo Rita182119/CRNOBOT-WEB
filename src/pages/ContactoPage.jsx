@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
+import emailjs from 'emailjs-com';
 import './ContactoPage.css';
 
 const ContactoPage = () => {
@@ -14,26 +15,23 @@ const ContactoPage = () => {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [activeSocial, setActiveSocial] = useState(null);
+  const [submitError, setSubmitError] = useState('');
   const location = useLocation();
+  const formRef = useRef();
 
-  // Efecto para scroll automático al formulario cuando viene con hash
+  // Configuración de EmailJS - REEMPLAZA CON TUS DATOS REALES
+  const EMAILJS_CONFIG = {
+    SERVICE_ID: 'service_thbe2y8', // Crea uno en https://www.emailjs.com/
+    TEMPLATE_ID: 'template_fcco3ro', // Crea tu template
+    USER_ID: '-ZCtHth4uHc5d6WGo' // Tu Public Key
+  };
+
   useEffect(() => {
     if (location.hash === '#contact-form') {
       const formSection = document.getElementById('contact-form');
       if (formSection) {
         setTimeout(() => {
-          formSection.scrollIntoView({ 
-            behavior: 'smooth',
-            block: 'center'
-          });
-          
-          // Opcional: agregar un efecto visual de highlight
-          formSection.style.transition = 'all 0.5s ease';
-          formSection.style.boxShadow = '0 0 0 3px rgba(51, 255, 153, 0.5)';
-          setTimeout(() => {
-            formSection.style.boxShadow = 'none';
-          }, 2000);
+          formSection.scrollIntoView({ behavior: 'smooth' });
         }, 300);
       }
     }
@@ -46,12 +44,16 @@ const ContactoPage = () => {
       [name]: value
     }));
     
-    // Limpiar error del campo cuando el usuario empiece a escribir
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
         [name]: ''
       }));
+    }
+    
+    // Limpiar errores generales cuando el usuario empiece a escribir
+    if (submitError) {
+      setSubmitError('');
     }
   };
 
@@ -59,29 +61,81 @@ const ContactoPage = () => {
     const newErrors = {};
 
     if (!formData.nombre.trim()) {
-      newErrors.nombre = 'El nombre es obligatorio';
+      newErrors.nombre = 'Nombre obligatorio';
+    } else if (formData.nombre.trim().length < 2) {
+      newErrors.nombre = 'Nombre muy corto';
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = 'El email es obligatorio';
+      newErrors.email = 'Email obligatorio';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'El formato del email no es válido';
+      newErrors.email = 'Email no válido';
     }
 
     if (!formData.asunto.trim()) {
-      newErrors.asunto = 'El asunto es obligatorio';
+      newErrors.asunto = 'Selecciona un curso';
     }
 
     if (!formData.mensaje.trim()) {
-      newErrors.mensaje = 'El mensaje es obligatorio';
+      newErrors.mensaje = 'Mensaje obligatorio';
     } else if (formData.mensaje.length < 10) {
-      newErrors.mensaje = 'El mensaje debe tener al menos 10 caracteres';
+      newErrors.mensaje = 'Mínimo 10 caracteres';
+    } else if (formData.mensaje.length > 500) {
+      newErrors.mensaje = 'Máximo 500 caracteres';
     }
 
     return newErrors;
   };
 
   const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Validar formulario
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitError('');
+
+    try {
+      // Enviar formulario con EmailJS
+      const result = await emailjs.sendForm(
+        EMAILJS_CONFIG.SERVICE_ID,
+        EMAILJS_CONFIG.TEMPLATE_ID,
+        formRef.current,
+        EMAILJS_CONFIG.USER_ID
+      );
+
+      console.log('Email enviado:', result.text);
+      
+      // Éxito
+      setSubmitSuccess(true);
+      setFormData({
+        nombre: '',
+        email: '',
+        telefono: '',
+        asunto: '',
+        mensaje: ''
+      });
+
+      // Ocultar mensaje de éxito después de 5 segundos
+      setTimeout(() => {
+        setSubmitSuccess(false);
+      }, 5000);
+
+    } catch (error) {
+      console.error('Error al enviar email:', error);
+      setSubmitError('Error al enviar el formulario. Por favor, intenta nuevamente.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Función alternativa usando fetch (si prefieres no usar EmailJS)
+  const handleSubmitAlternative = async (e) => {
     e.preventDefault();
     
     const validationErrors = validateForm();
@@ -91,341 +145,281 @@ const ContactoPage = () => {
     }
 
     setIsSubmitting(true);
-    
-    // Simular envío del formulario
+    setSubmitError('');
+
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      setSubmitSuccess(true);
-      setFormData({
-        nombre: '',
-        email: '',
-        telefono: '',
-        asunto: '',
-        mensaje: ''
+      // Aquí puedes conectar con tu backend o servicio de forms
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
       });
+
+      if (response.ok) {
+        setSubmitSuccess(true);
+        setFormData({
+          nombre: '',
+          email: '',
+          telefono: '',
+          asunto: '',
+          mensaje: ''
+        });
+      } else {
+        throw new Error('Error en el servidor');
+      }
     } catch (error) {
-      console.error('Error al enviar el formulario:', error);
+      setSubmitError('Error al enviar el formulario. Por favor, intenta nuevamente.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const contactInfo = [
+  const quickLinks = [
     {
-      icon: '📍',
-      title: 'Dirección',
-      details: ['Av. Principal 123, Ciudad', 'Código Postal 12345, País'],
-      gradient: 'gradient-1'
+      icon: '💬',
+      title: 'WhatsApp',
+      desc: 'Chat rápido',
+      url: 'https://wa.me/51977484496',
+      color: '#25D366'
+    },
+    {
+      icon: '📘',
+      title: 'Facebook',
+      desc: 'CRONO BOT',
+      url: 'https://www.facebook.com/profile.php?id=61583167447557&locale=es_LA',
+      color: '#1877F2'
     },
     {
       icon: '📱',
-      title: 'Teléfono',
-      details: ['+1 (555) 123-4567', '+1 (555) 987-6543'],
-      gradient: 'gradient-2'
-    },
-    {
-      icon: '✉️',
-      title: 'Email',
-      details: ['info@empresa.com', 'soporte@empresa.com'],
-      gradient: 'gradient-3'
-    }
-  ];
-
-  const businessHours = [
-    { days: 'Lunes - Viernes', hours: '9:00 AM - 6:00 PM' },
-    { days: 'Sábados', hours: '10:00 AM - 2:00 PM' },
-    { days: 'Domingos', hours: 'Cerrado' }
-  ];
-
-  const socialMedia = [
-    { 
-      name: 'Facebook', 
-      handle: '/EmpresaOficial', 
-      icon: '📘',
-      url: 'https://facebook.com/EmpresaOficial',
-      gradient: 'gradient-4',
-      color: '#1877F2'
-    },
-    { 
-      name: 'Instagram', 
-      handle: '@empresa_oficial', 
-      icon: '📷',
-      url: 'https://instagram.com/empresa_oficial',
-      gradient: 'gradient-5',
+      title: 'Instagram',
+      desc: 'CRONO BOT',
+      url: 'https://www.instagram.com/cronoadmin/',
       color: '#E4405F'
     },
-    { 
-      name: 'Twitter', 
-      handle: '@empresa_oficial', 
-      icon: '🐦',
-      url: 'https://twitter.com/empresa_oficial',
-      gradient: 'gradient-6',
-      color: '#1DA1F2'
-    },
-    { 
-      name: 'LinkedIn', 
-      handle: '/company/empresa', 
+    {
       icon: '💼',
-      url: 'https://linkedin.com/company/empresa',
-      gradient: 'gradient-1',
+      title: 'LinkedIn',
+      desc: 'CRONO BOT',
+      url: 'https://www.linkedin.com/in/crono-bot-a16464395/',
       color: '#0A66C2'
-    },
-    { 
-      name: 'TikTok', 
-      handle: '@empresa_oficial', 
-      icon: '🎵',
-      url: 'https://tiktok.com/@empresa_oficial',
-      gradient: 'gradient-2',
-      color: '#000000'
-    },
-    { 
-      name: 'YouTube', 
-      handle: '/c/EmpresaOficial', 
-      icon: '📺',
-      url: 'https://youtube.com/c/EmpresaOficial',
-      gradient: 'gradient-3',
-      color: '#FF0000'
     }
+  ];
+
+  const courseOptions = [
+    'QA Fundamentals'
   ];
 
   return (
-    <div className="contacto-container" id="contact-section" >
-      <header className="contacto-header" id="contact-form">
+    <div className="contact-compact" id='contact-forms'>
+      {/* Header Compacto */}
+      <header className="compact-header">
+        <div className="header-bg"></div>
         <div className="header-content">
-          <h1 className="contacto-title">
-            <span className="title-gradient">Conecta con Nosotros</span>
+          <h1 className="compact-title">
+            ¿Listo para <span className="highlight">aprender en CRONO BOT</span>?
           </h1>
-          <p className="contacto-subtitle">
-            ¿Tienes una idea genial? ¡Hablemos! Estamos aquí para convertir tus proyectos en realidad.
+          <p className="compact-subtitle">
+            Contáctanos y recibe información detallada de nuestros cursos
           </p>
-          <div className="header-decoration">
-            <div className="decoration-circle circle-1"></div>
-            <div className="decoration-circle circle-2"></div>
-            <div className="decoration-circle circle-3"></div>
-          </div>
         </div>
       </header>
 
-      {submitSuccess && (
-        <div className="success-message">
-          <div className="success-content">
-            <div className="success-icon">✨</div>
-            <div className="success-text">
-              <h3>¡Mensaje enviado con éxito!</h3>
-              <p>Te contactaremos pronto. Mientras tanto, síguenos en redes.</p>
-            </div>
-            <button 
-              onClick={() => setSubmitSuccess(false)}
-              className="close-success"
-            >
-              ×
-            </button>
+      {/* Contenido Principal */}
+      <main className="compact-main">
+        {/* Sección Rápida de Contacto */}
+        <section className="quick-contact">
+          <div className="quick-grid">
+            {quickLinks.map((link, index) => (
+              <a
+                key={index}
+                href={link.url}
+                className="quick-link"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ '--link-color': link.color }}
+              >
+                <div className="quick-icon">{link.icon}</div>
+                <div className="quick-info">
+                  <span className="quick-title">{link.title}</span>
+                  <span className="quick-desc">{link.desc}</span>
+                </div>
+              </a>
+            ))}
           </div>
-        </div>
-      )}
+        </section>
 
-      <div className="contacto-content">
-        <div className="contacto-info">
-          <div className="info-card card-hover">
-            <div className="card-header">
-              <h2 className="info-title">
-                <span className="info-icon">💬</span>
-                Información de Contacto
+        {/* Formulario Compacto */}
+        <section className="form-section-compact" id="contact-form">
+          <div className="form-container">
+            <div className="form-header-compact">
+              <h2 className="form-title-compact">
+                <span className="form-icon">📝</span>
+                Solicita Información
               </h2>
+              <p className="form-desc">Te contactamos en menos de 24h</p>
             </div>
-            <div className="info-details">
-              {contactInfo.map((item, index) => (
-                <div key={index} className={`info-item ${item.gradient}`}>
-                  <div className="info-icon-wrapper">
-                    <span className="info-item-icon">{item.icon}</span>
-                  </div>
-                  <div className="info-text">
-                    <strong>{item.title}</strong>
-                    {item.details.map((detail, i) => (
-                      <p key={i}>{detail}</p>
+
+            {submitSuccess && (
+              <div className="success-message-compact">
+                <div className="success-icon">✅</div>
+                <div className="success-text">
+                  <strong>¡Enviado con éxito!</strong>
+                  <span>Te contactaremos pronto con la información del curso</span>
+                </div>
+              </div>
+            )}
+
+            {submitError && (
+              <div className="error-message-compact">
+                <div className="error-icon">❌</div>
+                <div className="error-text">
+                  <strong>Error</strong>
+                  <span>{submitError}</span>
+                </div>
+              </div>
+            )}
+
+            <form 
+              ref={formRef}
+              className="compact-form" 
+              onSubmit={handleSubmit}
+            >
+              <div className="form-grid">
+                <div className="input-group-compact">
+                  <input
+                    className={`compact-input ${errors.nombre ? 'error' : ''}`}
+                    type="text"
+                    name="nombre"
+                    value={formData.nombre}
+                    onChange={handleChange}
+                    placeholder="Nombre completo *"
+                  />
+                  {errors.nombre && <span className="error-msg">{errors.nombre}</span>}
+                </div>
+
+                <div className="input-group-compact">
+                  <input
+                    className={`compact-input ${errors.email ? 'error' : ''}`}
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="Email *"
+                  />
+                  {errors.email && <span className="error-msg">{errors.email}</span>}
+                </div>
+
+                <div className="input-group-compact">
+                  <input
+                    className="compact-input"
+                    type="tel"
+                    name="telefono"
+                    value={formData.telefono}
+                    onChange={handleChange}
+                    placeholder="WhatsApp (opcional)"
+                  />
+                </div>
+
+                <div className="input-group-compact">
+                  <select
+                    className={`compact-select ${errors.asunto ? 'error' : ''}`}
+                    name="asunto"
+                    value={formData.asunto}
+                    onChange={handleChange}
+                  >
+                    <option value="">Curso de interés *</option>
+                    {courseOptions.map((course, index) => (
+                      <option key={index} value={course}>{course}</option>
                     ))}
+                  </select>
+                  {errors.asunto && <span className="error-msg">{errors.asunto}</span>}
+                </div>
+
+                <div className="input-group-compact full-width">
+                  <textarea
+                    className={`compact-textarea ${errors.mensaje ? 'error' : ''}`}
+                    name="mensaje"
+                    value={formData.mensaje}
+                    onChange={handleChange}
+                    placeholder="Cuéntanos tus objetivos... *"
+                    rows="3"
+                  />
+                  {errors.mensaje && <span className="error-msg">{errors.mensaje}</span>}
+                </div>
+              </div>
+
+              <button 
+                type="submit" 
+                className={`submit-btn-compact ${isSubmitting ? 'loading' : ''}`}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <div className="btn-spinner"></div>
+                    Enviando...
+                  </>
+                ) : (
+                  <>
+                    <span className="btn-icon">🚀</span>
+                    Enviar Solicitud
+                  </>
+                )}
+              </button>
+            </form>
+          </div>
+        </section>
+
+        {/* Info Adicional Compacta */}
+        <section className="info-section">
+          <div className="info-grid">
+            <div className="info-card-compact">
+              <div className="info-icon">⏰</div>
+              <div className="info-content">
+                <h3>Horarios</h3>
+                <div className="schedule-list">
+                  <div className="schedule-item-compact">
+                    <span>Lun-Vie:</span>
+                    <span>9:00 - 20:00</span>
+                  </div>
+                  <div className="schedule-item-compact">
+                    <span>Sábados:</span>
+                    <span>10:00 - 14:00</span>
                   </div>
                 </div>
-              ))}
+              </div>
             </div>
-          </div>
 
-          <div className="info-card card-hover">
-            <div className="card-header">
-              <h2 className="info-title">
-                <span className="info-icon">⏰</span>
-                Horario de Atención
-              </h2>
+            <div className="info-card-compact">
+              <div className="info-icon">💻</div>
+              <div className="info-content">
+                <h3>Modalidad</h3>
+                <p>100% Online en vivo</p>
+                <p>Acceso desde cualquier dispositivo</p>
+              </div>
             </div>
-            <div className="info-details">
-              {businessHours.map((schedule, index) => (
-                <div key={index} className="schedule-item">
-                  <span className="schedule-days">{schedule.days}</span>
-                  <span className="schedule-hours">{schedule.hours}</span>
-                </div>
-              ))}
-            </div>
-          </div>
 
-          <div className="info-card card-hover">
-            <div className="card-header">
-              <h2 className="info-title">
-                <span className="info-icon">🌐</span>
-                Síguenos en Redes
-              </h2>
-            </div>
-            <div className="social-links">
-              {socialMedia.map((social, index) => (
-                <a 
-                  key={index} 
-                  href={social.url} 
-                  className={`social-link ${social.gradient} ${activeSocial === index ? 'active' : ''}`}
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  onMouseEnter={() => setActiveSocial(index)}
-                  onMouseLeave={() => setActiveSocial(null)}
-                >
-                  <div className="social-icon-container">
-                    <span className="social-icon">{social.icon}</span>
-                  </div>
-                  <div className="social-info">
-                    <span className="social-name">{social.name}</span>
-                    <span className="social-handle">{social.handle}</span>
-                  </div>
-                  <div className="social-arrow">→</div>
-                </a>
-              ))}
+            <div className="info-card-compact">
+              <div className="info-icon">🎯</div>
+              <div className="info-content">
+                <h3>Resultados</h3>
+                <p>100% Práctico</p>
+                <p>100% Online</p>
+              </div>
             </div>
           </div>
+        </section>
+      </main>
+
+      {/* Footer Mínimo */}
+      <footer className="compact-footer">
+        <div className="footer-content">
+          <p className="footer-text">
+            <strong>Crono Bot</strong> - Transformando carreras en tech
+          </p>
         </div>
-
-        {/* FORMULARIO CON ID PARA EL HASH */}
-        <div className="contacto-form-container card-hover">
-          <div className="form-header">
-            <h2 className="form-title">Envía tu Mensaje</h2>
-            <p className="form-subtitle">Cuéntanos sobre tu proyecto. ¡Respondemos en menos de 24h!</p>
-          </div>
-          <form className="contacto-form" onSubmit={handleSubmit}>
-            <div className="form-row">
-              <div className="form-group">
-                <label className="form-label" htmlFor="nombre">
-                  Nombre Completo *
-                </label>
-                <input
-                  className={`form-input ${errors.nombre ? 'error' : ''}`}
-                  type="text"
-                  id="nombre"
-                  name="nombre"
-                  value={formData.nombre}
-                  onChange={handleChange}
-                  placeholder="Tu nombre completo"
-                />
-                {errors.nombre && <span className="error-message">{errors.nombre}</span>}
-              </div>
-              
-              <div className="form-group">
-                <label className="form-label" htmlFor="email">
-                  Email *
-                </label>
-                <input
-                  className={`form-input ${errors.email ? 'error' : ''}`}
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="tu.email@ejemplo.com"
-                />
-                {errors.email && <span className="error-message">{errors.email}</span>}
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label className="form-label" htmlFor="telefono">
-                Teléfono
-              </label>
-              <input
-                className="form-input"
-                type="tel"
-                id="telefono"
-                name="telefono"
-                value={formData.telefono}
-                onChange={handleChange}
-                placeholder="+1 (555) 123-4567"
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label" htmlFor="asunto">
-                Asunto *
-              </label>
-              <input
-                className={`form-input ${errors.asunto ? 'error' : ''}`}
-                type="text"
-                id="asunto"
-                name="asunto"
-                value={formData.asunto}
-                onChange={handleChange}
-                placeholder="¿En qué podemos ayudarte?"
-              />
-              {errors.asunto && <span className="error-message">{errors.asunto}</span>}
-            </div>
-
-            <div className="form-group">
-              <label className="form-label" htmlFor="mensaje">
-                Mensaje *
-              </label>
-              <textarea
-                className={`form-textarea ${errors.mensaje ? 'error' : ''}`}
-                id="mensaje"
-                name="mensaje"
-                value={formData.mensaje}
-                onChange={handleChange}
-                placeholder="Describe tu idea o proyecto..."
-                rows="5"
-              />
-              {errors.mensaje && <span className="error-message">{errors.mensaje}</span>}
-            </div>
-
-            <button 
-              type="submit" 
-              className={`submit-btn ${isSubmitting ? 'submitting' : ''}`}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? (
-                <>
-                  <span className="spinner"></span>
-                  Enviando...
-                </>
-              ) : (
-                <>
-                  <span className="btn-icon">🚀</span>
-                  Enviar Mensaje
-                </>
-              )}
-            </button>
-          </form>
-        </div>
-
-        <div className="contacto-map card-hover">
-          <div className="map-header">
-            <h3>📍 Nuestra Ubicación</h3>
-            <p>Ven a visitarnos cuando quieras</p>
-          </div>
-          <div className="map-placeholder">
-            <div className="map-content">
-              <div className="map-pin">
-                <span className="pin-icon">📍</span>
-              </div>
-              <div className="map-info">
-                <h4>Oficina Central</h4>
-                <p>Av. Principal 123, Ciudad, País</p>
-                <button className="map-btn">Ver en Google Maps</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      </footer>
     </div>
   );
 };

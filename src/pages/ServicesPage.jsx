@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import FeatureCard from '../components/common/FeatureCard';
 import CtaSection from '../components/sections/CtaSection';
 import './ServicesPage.css';
@@ -144,8 +145,24 @@ const TabNavigation = React.memo(({ services, activeTab, onTabChange }) => {
   );
 });
 
-// Nuevo componente para Hero Section mejorado - ORDEN CORREGIDO EN RESPONSIVE
+// Nuevo componente para Hero Section mejorado - CON BOTONES FUNCIONALES
 const HeroSection = React.memo(({ isVisible }) => {
+  const navigate = useNavigate();
+
+  // Función para redirigir a contactos
+  const redirectToContact = () => {
+    navigate('/contact#contact-form');
+  };
+
+  // Función para abrir WhatsApp
+  const openWhatsApp = () => {
+    const phoneNumber = '1234567890'; // Reemplaza con tu número real
+    const defaultMessage = 'Hola, me interesa conocer el plan de estudios completo de los cursos de QA. ¿Podrían enviarme más información?';
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(defaultMessage)}`;
+    
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+  };
+
   return (
     <section className={`services-hero ${isVisible ? 'visible' : ''}`}>
       <div className="hero-background"></div>
@@ -155,50 +172,50 @@ const HeroSection = React.memo(({ isVisible }) => {
           <div className="hero-text">
             <h1 className="hero-title">
               Conviértete en 
-              <span className="gradient-text"> QA Expert</span>
+              <span className="gradient-text"> QA Tester Profesional</span>
             </h1>
             <p className="hero-subtitle">
-              Domina las herramientas y metodologías más demandadas del mercado. 
-              <strong> 95% de nuestros estudiantes consiguen empleo en menos de 3 meses.</strong>
+              Aprende testing manual y automation con herramientas actuales del mercado. 
+              <strong> +80% de nuestros egresados aplican exitosamente a trabajos de QA.</strong>
             </p>
             
             <div className="hero-highlights">
               <div className="highlight-item">
                 <span className="highlight-icon">✅</span>
-                <span>Certificación internacional</span>
+                <span>Certificado de finalización</span>
               </div>
               <div className="highlight-item">
                 <span className="highlight-icon">✅</span>
-                <span>Mentoría 1:1 con expertos</span>
+                <span>Clases online en vivo con expertos</span>
               </div>
               <div className="highlight-item">
                 <span className="highlight-icon">✅</span>
-                <span>Acceso de por vida</span>
+                <span>Materiales de estudio descargables</span>
               </div>
             </div>
 
             <div className="hero-actions">
-              <button className="hero-cta primary">
+              <button className="hero-cta primary" onClick={redirectToContact}>
                 Comenzar Ahora
                 <span className="cta-arrow">→</span>
               </button>
-              <button className="hero-cta secondary">
-                Ver Plan de Estudios
+              <button className="hero-cta secondary" onClick={openWhatsApp}>
+                Solicitar Plan de Estudios
               </button>
             </div>
 
             <div className="hero-stats">
               <div className="stat">
-                <span className="stat-number">2,000+</span>
-                <span className="stat-label">Estudiantes</span>
+                <span className="stat-number">100%</span>
+                <span className="stat-label">Práctico</span>
               </div>
               <div className="stat">
-                <span className="stat-number">4.9</span>
-                <span className="stat-label">Rating</span>
+                <span className="stat-number">0</span>
+                <span className="stat-label">Experiencia Requerida</span>
               </div>
               <div className="stat">
-                <span className="stat-number">95%</span>
-                <span className="stat-label">Empleabilidad</span>
+                <span className="stat-number">100%</span>
+                <span className="stat-label">Online</span>
               </div>
             </div>
           </div>
